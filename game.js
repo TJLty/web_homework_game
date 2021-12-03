@@ -34,6 +34,10 @@ function init() {
         {"src": "man.png", "id": "man"},
         {"src": "wall.png", "id": "wall"},
         {"src": "enemy.png", "id": "enemy"},
+        {"src": "man_right.png", "id": "man_right"},
+        {"src": "man_left.png", "id": "man_left"},
+        {"src": "man_up.png", "id": "man_up"},
+        {"src": "man_down.png", "id": "man_down"},
     ];
 
     loader = new createjs.LoadQueue(true);
@@ -55,8 +59,8 @@ function randomNum(minNum, maxNum) {
 
 function handleComplete() {
     createWall();
-    createMan();
     createEnemy(10);
+    createMan();
     window.onkeydown=handleMove;
 }
 function handleMove(event){
@@ -71,13 +75,15 @@ function handleMove(event){
         console.log("press");
         event.preventDefault();
         if (keyMap[event.keyCode] === "left") {
-            manMove(-1, 0);
+            manMove(-1, 0).then(()=>{
+                man.image=loader.getResult("man_left");
+            });
         } else if (keyMap[event.keyCode] === "right") {
-            manMove(1, 0);
+            manMove(1, 0).then(man.image=loader.getResult("man_right"));
         } else if (keyMap[event.keyCode] === "up") {
-            manMove(0, -1);
+            manMove(0, -1).then(man.image=loader.getResult("man_up"));
         } else if (keyMap[event.keyCode] === "down") {
-            manMove(0, 1);
+            manMove(0, 1).then(man.image=loader.getResult("man_down"));
         }
     }
 }
@@ -103,7 +109,7 @@ function handleMove(event){
 //     }
 // });
 
-async function  manMove(x, y) {
+async function manMove(x, y) {
     //console.log(x, y)
     let x_index = calIndex(man.x);
     let y_index = calIndex(man.y);
@@ -114,7 +120,6 @@ async function  manMove(x, y) {
             x: calPos(x_index + x),
             y: calPos(y_index + y),
         }, 0, createjs.Ease.getPowOut(2));
-
     } else {
         console.log("碰撞",man.x,man.y,x_index,y_index);
     }
